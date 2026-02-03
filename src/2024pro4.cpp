@@ -1,85 +1,66 @@
-/*#include <iostream>
+#include <iostream>
 #include <string>
-#include <set>
+#include <unordered_map>
 #include <vector>
+#include <unordered_set>
 
-using namespace std;
+bool sharesValue(const std::unordered_map<char, int> map1, const std::unordered_map<char, int> map2) {
+    std::unordered_set<int> values;
+
+    for (const auto& [key, value] : map2)
+        values.insert(value);
+
+    for (const auto& [key, value] : map1) {
+        if (values.count(value))
+            return true;
+    }
+
+    return false;
+}
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+    std::string typed;
+    std::string displayed;
 
-    string pressed, displayed;
-    cin >> pressed >> displayed;
+    std::cin >> typed;
+    std::cin >> displayed;
 
-    // Store unique letters from each string
-    set<char> pset;
-    for (char c : pressed) pset.insert(c);
+    std::unordered_map<char, int> typedUnique;
+    std::unordered_map<char, int> displayedUnique;
 
-    set<char> dset;
-    for (char c : displayed) dset.insert(c);
+    char original = '-';
+    char replaced = '-';
+    char silent = '-';
 
-    // 1) Find the wrong letter (appears in displayed but not pressed)
-    char wrong = '?';
-    for (char c : dset) {
-        if (pset.find(c) == pset.end()) {
-            wrong = c;
+    for (const char& ch : typed) {
+        typedUnique[ch]++;
+    }
+
+    for (const char& ch : displayed) {
+        displayedUnique[ch]++;
+    }
+
+    for (auto const& pair : typedUnique) {
+        if (displayedUnique.count(pair.first))
+            continue;
+
+        if (!displayedUnique.count(replaced) || !typedUnique.count(original))
+            for (auto const& pair2 : displayedUnique) {
+                if (pair.second == pair2.second && pair.first != pair2.first) {
+                    original = pair.first;
+                    replaced = pair2.first;
+
+                    continue;
+                }
+            }
+
+        silent = pair.first;
+
+        if (silent != '-' && original != '-' && replaced != '-')
             break;
-        }
     }
 
-    // 2) Find candidates for silly/quiet keys
-    vector<char> candidates;
-    for (char c : pset) {
-        if (dset.find(c) == dset.end()) {
-            candidates.push_back(c);
-        }
-    }
-
-    char silly = '?';
-    char quiet = '-';
-
-    // Function to simulate the typing
-    auto works = [&](char sillyTry, char quietTry) {
-        string sim;
-        for (char c : pressed) {
-            if (c == sillyTry) {
-                sim.push_back(wrong);
-            }
-            else if (c == quietTry) {
-                // produces nothing
-            }
-            else {
-                sim.push_back(c);
-            }
-        }
-        return sim == displayed;
-        };
-
-    // Try possible assignments
-    for (char c : candidates) {
-        char other = '-';
-        if (candidates.size() == 2) {
-            if (candidates[0] == c)
-                other = candidates[1];
-            else
-                other = candidates[0];
-        }
-
-        if (works(c, other)) {
-            silly = c;
-            quiet = other;
-            break;
-        }
-    }
-
-    // Output results
-    cout << silly << " " << wrong << "\n";
-    if (quiet == '-')
-        cout << "-\n";
-    else
-        cout << quiet << "\n";
+    std::cout << original << " " << replaced << "\n" << silent << "\n";
 
     return 0;
 }
-*/

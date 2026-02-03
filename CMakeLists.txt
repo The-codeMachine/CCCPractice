@@ -15,7 +15,7 @@ project ("CCCPractice")
 add_executable (CCCPractice  "CCCPractice.h" "src/2023pro1.cpp" "src/2023pro2.cpp" "src/2023pro3.cpp" "src/2023pro4.cpp" "src/2024pro2.cpp" "src/2024pro1.cpp" "src/2024pro4.cpp" "src/2024pro3.cpp" "src/2024pro5.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET CCCPractice PROPERTY CXX_STANDARD 20)
+  set_property(TARGET CCCPractice PROPERTY CXX_STANDARD 17)
 endif()
 
 # TODO: Add tests and install targets if needed.
