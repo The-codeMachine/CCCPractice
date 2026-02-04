@@ -1,66 +1,74 @@
-#include <iostream>
+/*#include <iostream>
 #include <string>
-#include <unordered_map>
 #include <vector>
 #include <unordered_set>
 
-bool sharesValue(const std::unordered_map<char, int> map1, const std::unordered_map<char, int> map2) {
-    std::unordered_set<int> values;
-
-    for (const auto& [key, value] : map2)
-        values.insert(value);
-
-    for (const auto& [key, value] : map1) {
-        if (values.count(value))
-            return true;
-    }
-
-    return false;
-}
-
 int main() {
-    std::string typed;
-    std::string displayed;
+    std::string pressed, displayed;
+    std::cin >> pressed >> displayed;
 
-    std::cin >> typed;
-    std::cin >> displayed;
+    std::vector<int> inPressed(26, 0);
+    std::vector<int> inDisplayed(26, 0);
 
-    std::unordered_map<char, int> typedUnique;
-    std::unordered_map<char, int> displayedUnique;
+    for (char c : pressed) inPressed[c - 'a']++;
+    for (char c : displayed) inDisplayed[c - 'a']++;
 
-    char original = '-';
-    char replaced = '-';
-    char silent = '-';
-
-    for (const char& ch : typed) {
-        typedUnique[ch]++;
+    char wrong = '-';
+    for (int i = 0; i < 26; ++i) {
+        if (inDisplayed[i] > 0 && inPressed[i] == 0) {
+            wrong = char('a' + i);
+            break;
+        }
     }
 
-    for (const char& ch : displayed) {
-        displayedUnique[ch]++;
+    std::vector<char> candidates;
+    for (int i = 0; i < 26; ++i) {
+        if (inPressed[i] > 0 && inDisplayed[i] == 0) {
+            candidates.push_back(char('a' + i));
+        }
     }
 
-    for (auto const& pair : typedUnique) {
-        if (displayedUnique.count(pair.first))
-            continue;
+    char silly = '-';
+    char quiet = '-';
 
-        if (!displayedUnique.count(replaced) || !typedUnique.count(original))
-            for (auto const& pair2 : displayedUnique) {
-                if (pair.second == pair2.second && pair.first != pair2.first) {
-                    original = pair.first;
-                    replaced = pair2.first;
+    for (char s : candidates) {
+        for (char q : candidates) {
+            if (s == q) continue;
 
-                    continue;
-                }
+            std::string sim;
+
+            for (char c : pressed) {
+                if (c == q) continue;
+                if (c == s) sim.push_back(wrong);
+                else sim.push_back(c);
             }
 
-        silent = pair.first;
-
-        if (silent != '-' && original != '-' && replaced != '-')
-            break;
+            if (sim == displayed) {
+                silly = s;
+                quiet = q;
+                break;
+            }
+        }
+        if (silly != '-') break;
     }
 
-    std::cout << original << " " << replaced << "\n" << silent << "\n";
+    if (silly == '-') {
+        for (char s : candidates) {
+            std::string sim;
 
-    return 0;
-}
+            for (char c : pressed) {
+                if (c == s) sim.push_back(wrong);
+                else sim.push_back(c);
+            }
+
+            if (sim == displayed) {
+                silly = s;
+                quiet = '-';
+                break;
+            }
+        }
+    }
+
+    std::cout << silly << " " << wrong << "\n";
+    std::cout << quiet << "\n";
+} */
