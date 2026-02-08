@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 
 int main() {
 	int start;
@@ -24,4 +24,4 @@ int main() {
 	std::cout << end << "\n";
 
 	return 0;
-}
+} */

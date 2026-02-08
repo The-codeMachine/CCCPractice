@@ -1,66 +1,61 @@
-/*
 #include <iostream>
 #include <vector>
+#include <string>
+#include <algorithm>
 
 int main() {
-	int num = -1;
-	std::cin >> num;
-	
-	std::vector<int> veclin1;
-	std::vector<int> veclin2;
+	size_t cols;
+	std::cin >> cols;
+	std::cin.ignore(); // discared newline after col
+
+	std::string row1, row2;
+
+	std::getline(std::cin, row1);
+	std::getline(std::cin, row2);
+
+	// Remove spaces
+	row1.erase(std::remove(row1.begin(), row1.end(), ' '), row1.end());
+	row2.erase(std::remove(row2.begin(), row2.end(), ' '), row2.end());
 
 	size_t meters = 0;
-	for (int i = 0; i < 2; ++i) {
-		std::string line;
-		std::cin >> line;
+	bool isAdjecent1 = false;
+	bool isAdjecent2 = false;
+	for (size_t i = 0; i < row1.size(); ++i) {
+		if (row1[i] == '1' && row2[i] == '1') {
+			meters += 4;
+			isAdjecent1 = true;
+			isAdjecent2 = true;
 
-		if (i == 0) {
-			bool adj = false;
-			for (const char& ch : line) {
-
-				if (ch == '0') {
-					veclin1.emplace_back(0);
-					adj = false;
-				}
-				else if (ch == '1') {
-					veclin1.emplace_back(1);
-					meters += 3;
-
-					if (adj == true)
-						meters--;
-
-					adj = true;
-				}
+			if (row1[i - 1] == '1' && row1[i + 1] == '1' || row2[i - 1] == '1' && row2[i + 1] == '1') {
+				meters -= 2;
 			}
+			continue;
 		}
-		if (i == 1) {
-			bool adj = false;
-			for (const char& ch : line) {
 
-				if (ch == '0') {
-					veclin2.emplace_back(0);
-					adj = false;
-				}
-				else if (ch == '1') {
-					veclin2.emplace_back(1);
-					meters += 3;
-
-					if (adj == true)
-						meters--;
-
-					adj = true;
-				}
-			}
+		if (row1[i] == '1' && isAdjecent1 == false) {
+			isAdjecent1 = true;
+			meters += 3;
 		}
-	}
+		else if (row1[i] == '1' && isAdjecent1 == true) {
+			meters++;
+		}
+		else {
+			isAdjecent1 = false;
+		}
 
-	for (int i = 0; i < veclin1.size(); ++i) {
-		if (veclin1.at(i) == 1)
-			if (veclin2.at(i) == 1)
-				meters--;
+		if (row2[i] == '1' && isAdjecent2 == false) {
+			isAdjecent2 = true;
+			meters += 3;
+		}
+		else if (row2[i] == '1' && isAdjecent2 == true) {
+			meters++;
+		}
+		else {
+			isAdjecent2 = false;
+		}
 	}
 
 	std::cout << meters << "\n";
 
 	return 0;
-} */
+} 
