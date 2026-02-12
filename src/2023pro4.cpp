@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -26,7 +26,7 @@ int main() {
 			isAdjecent1 = true;
 			isAdjecent2 = true;
 
-			if (row1[i - 1] == '1' && row1[i + 1] == '1' || row2[i - 1] == '1' && row2[i + 1] == '1') {
+			if ((row1[i - 1] == '1' && row1[i + 1] == '1') || (row2[i - 1] == '1' && row2[i + 1] == '1')) {
 				meters -= 2;
 			}
 			continue;
@@ -58,4 +58,4 @@ int main() {
 	std::cout << meters << "\n";
 
 	return 0;
-} 
+} */
