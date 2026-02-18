@@ -1,67 +1,61 @@
-#include <iostream>
-#include <string>
-#include <sstream>
+/*#include <iostream>
+#include <unordered_map>
 #include <vector>
-
-struct pair {
-	std::string studentOne;
-	std::string studentTwo;
-};
+#include <string>
 
 int main() {
-	int x; // must be together
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
 
-	std::cin >> x;
-	
-	std::vector<pair> mustBeTogether;
-	while (x--) {
-		std::string group;
-		std::cin >> group;
+    int sameCount;
+    std::cin >> sameCount;
 
-		std::istringstream iss(group);
-		std::string token;
-		pair pairOfStudents;
-		while (iss >> token) {
-			if (pairOfStudents.studentOne == "")
-				pairOfStudents.studentOne = token;
-			else if (pairOfStudents.studentTwo == "") {
-				pairOfStudents.studentTwo = token;
-				mustBeTogether.push_back(pairOfStudents);
-				pairOfStudents = pair{};
-			}
-		}
-	}
+    std::vector<std::pair<std::string, std::string>> sameConstraints(sameCount);
+    for (int i = 0; i < sameCount; ++i) {
+        std::cin >> sameConstraints[i].first >> sameConstraints[i].second;
+    }
 
-	int y; // cannot be together
+    int diffCount;
+    std::cin >> diffCount;
 
-	std::cin >> y;
-	
-	std::vector<pair> mustBeTogether;
-	while (y--) {
-		std::string group;
-		std::cin >> group;
+    std::vector<std::pair<std::string, std::string>> diffConstraints(diffCount);
+    for (int i = 0; i < diffCount; ++i) {
+        std::cin >> diffConstraints[i].first >> diffConstraints[i].second;
+    }
 
-		std::istringstream iss(group);
-		std::string token;
-		pair pairOfStudents;
-		while (iss >> token) {
-			if (pairOfStudents.studentOne == "")
-				pairOfStudents.studentOne = token;
-			else if (pairOfStudents.studentTwo == "") {
-				pairOfStudents.studentTwo = token;
-				mustBeTogether.push_back(pairOfStudents);
-				pairOfStudents = pair{};
-			}
-		}
-	}
+    int groupCount;
+    std::cin >> groupCount;
 
-	int idk;
+    std::unordered_map<std::string, int> groupOf;
+    groupOf.reserve(groupCount * 3);
 
-	std::cin >> idk;
+    for (int i = 0; i < groupCount; ++i) {
+        std::string a, b, c;
+        std::cin >> a >> b >> c;
 
-	for (int i = 0; i < idk; ++i) {
+        groupOf[a] = i;
+        groupOf[b] = i;
+        groupOf[c] = i;
+    }
 
-	}
+    int violations = 0;
 
-	return 0;
+    // Check "must be same group"
+    for (const auto& [a, b] : sameConstraints) {
+        if (groupOf[a] != groupOf[b]) {
+            ++violations;
+        }
+    }
+
+    // Check "must be different groups"
+    for (const auto& [a, b] : diffConstraints) {
+        if (groupOf[a] == groupOf[b]) {
+            ++violations;
+        }
+    }
+
+    std::cout << violations << "\n";
+
+    return 0;
 }
+*/
