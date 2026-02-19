@@ -12,7 +12,7 @@ endif()
 project ("CCCPractice")
 
 # Add source to this project's executable.
-add_executable (CCCPractice  "CCCPractice.h" "src/2023pro1.cpp" "src/2023pro2.cpp" "src/2023pro3.cpp" "src/2023pro4.cpp" "src/2024pro2.cpp" "src/2024pro1.cpp" "src/2024pro4.cpp" "src/2024pro3.cpp" "src/2024pro5.cpp" "src/2025pro1.cpp" "src/2025pro2.cpp" "src/2025pro3.cpp" "src/2025pro4.cpp" "src/2025pro5.cpp" "src/2022pro1.cpp" "src/2022pro2.cpp" "src/2022pro3.cpp" "src/2022pro4.cpp" "src/2022pro5.cpp" "src/2021pro4.cpp")
+add_executable (CCCPractice   "src/2023pro1.cpp" "src/2023pro2.cpp" "src/2023pro3.cpp" "src/2023pro4.cpp" "src/2024pro2.cpp" "src/2024pro1.cpp" "src/2024pro4.cpp" "src/2024pro3.cpp" "src/2024pro5.cpp" "src/2025pro1.cpp" "src/2025pro2.cpp" "src/2025pro3.cpp" "src/2025pro4.cpp" "src/2025pro5.cpp" "src/2022pro1.cpp" "src/2022pro2.cpp" "src/2022pro3.cpp" "src/2022pro4.cpp" "src/2022pro5.cpp" "src/2021pro4.cpp" "src/2021pro5.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET CCCPractice PROPERTY CXX_STANDARD 17)

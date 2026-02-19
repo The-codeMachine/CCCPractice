@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 #include <vector>
 
 int main() {
@@ -22,9 +22,9 @@ int main() {
 	for (int i = 0; i < books.size() - 1; i++) {
 		for (int j = 0; j < books.size() - i - 1; j++) {
 			if (books[j] < books[j + 1]) {
-				int jIndexValue = books[j];
+				int temp = books[j];
 				books[j] = books[j + 1];
-				books[j + 1] = jIndexValue;
+				books[j + 1] = temp;
 
 				swaps++;
 			}
@@ -34,4 +34,4 @@ int main() {
 	std::cout << swaps << "\n";
 
 	return 0;
-}
+}*/
