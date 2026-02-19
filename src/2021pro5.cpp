@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 #include <vector>
 
 void changeRow(int index, std::vector<std::vector<int>>& painting) {
@@ -28,7 +28,7 @@ int main() {
 	std::cin >> rows >> cols;
 
 	// rows		col			1 if gold
-	std::vector<std::vector<int>> canvas(rows, std::vector(cols, 0));
+	std::vector<std::vector<int>> canvas(rows, std::vector<int>(cols, 0));
 
 	int k;
 	std::cin >> k;
@@ -56,4 +56,4 @@ int main() {
 	std::cout << num << "\n";
 
 	return 0;
-}
+}*/

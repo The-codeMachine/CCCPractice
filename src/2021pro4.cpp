@@ -22,9 +22,7 @@ int main() {
 	for (int i = 0; i < books.size() - 1; i++) {
 		for (int j = 0; j < books.size() - i - 1; j++) {
 			if (books[j] < books[j + 1]) {
-				int temp = books[j];
-				books[j] = books[j + 1];
-				books[j + 1] = temp;
+				std::swap(books[j + 1], books[j]);
 
 				swaps++;
 			}
