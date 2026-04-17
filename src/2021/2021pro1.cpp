@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 
 int main() {
 	int b; 
@@ -16,7 +16,5 @@ int main() {
 	else
 		std::cout << "0\n";
 
-
-
 	return 0;
-}
+}*/
