@@ -1,64 +1,69 @@
 #include <iostream>
 #include <set>
-#include <cmath>
+#include <queue>
+#include <unordered_set>
 
-int main() {
+int main()
+{
     size_t n, m;
     std::cin >> n >> m;
 
     std::set<int> lights;
-    std::set<int> friends;
+    std::unordered_set<int> friends;
 
-    while (n--) {
-        int l;
-        std::cin >> l;
-        lights.insert(l);
+    for (size_t i = 0; i < n; ++i)
+    {
+        int x;
+        std::cin >> x;
+        lights.insert(x);
     }
 
-    while (m--) {
-        int f;
-        std::cin >> f;
-        friends.insert(f);
+    for (size_t i = 0; i < m; ++i)
+    {
+        int x;
+        std::cin >> x;
+        friends.insert(x);
     }
 
-    long long totalPower = 0;
+    std::queue<std::pair<int, int>> q; // {position, distance}
+    std::unordered_set<int> visited;
 
-    for (const auto& element : friends) {
-        if (lights.count(element))
-            continue;
+    // Initialize BFS with all lights
+    for (int l : lights)
+    {
+        q.push({l, 0});
+        visited.insert(l);
+    }
 
-        auto it = lights.lower_bound(element);
+    size_t totalPower = 0;
+    size_t found = 0;
 
-        int closest;
+    while (!q.empty() && found < friends.size())
+    {
+        auto [pos, dist] = q.front();
+        q.pop();
 
-        if (it == lights.begin()) {
-            // Only right neighbor exists
-            closest = *it;
-        } else if (it == lights.end()) {
-            // Only left neighbor exists
-            closest = *std::prev(it);
-        } else {
-            int right = *it;
-            int left = *std::prev(it);
-
-            if (std::abs(right - element) < std::abs(left - element))
-                closest = right;
-            else
-                closest = left;
+        if (friends.count(pos))
+        {
+            totalPower += dist;
+            friends.erase(pos);
+            found++;
         }
 
-        totalPower += std::abs(element - closest);
+        // expand left
+        if (!visited.count(pos - 1))
+        {
+            visited.insert(pos - 1);
+            q.push({pos - 1, dist + 1});
+        }
 
-        // Fill in lights between closest and element
-        if (closest < element) {
-            for (int i = closest; i <= element; ++i)
-                lights.insert(i);
-        } else {
-            for (int i = closest; i >= element; --i)
-                lights.insert(i);
+        // expand right
+        if (!visited.count(pos + 1))
+        {
+            visited.insert(pos + 1);
+            q.push({pos + 1, dist + 1});
         }
     }
 
     std::cout << totalPower << "\n";
-    return 0;
 }
