@@ -1,87 +1,52 @@
-#include <iostream>
-#include <cstdint>
+// Daniel Zhang, Pinetree Secondary
+// Dijkstra on edges instead, simpler implementation, harder to find
+
 #include <vector>
+#include <tuple>
+#include <cstdint>
+#include <iostream>
+#include <queue>
 
-struct Location {
-    bool out = false;
-    long minimum_cost = 1'000'000'000;
-    std::vector<uint32_t> tunnels; // references the id of the tunnel
-    long d = 0;
-};
+using namespace std;
 
-struct Tunnel {
-    Location& loc_1;
-    Location& loc_2;
-    long lava_level;
-};
+using ll = long long;
+using State = tuple<ll, ll, ll>;
+
+int vis[200001], edges[200001];
+vector<pair<ll, ll>> graph[200001];
 
 int main() {
-    uint32_t n; // num of locations
-    uint32_t m; // num of tunnels
-
-    std::cin >> n >> m;
-
-    std::vector<Location> locations(n);
-    std::vector<Tunnel> tunnels;
-    tunnels.reserve(m);
-
-    for (uint32_t i = 0; i < m; ++i) {
-        uint32_t locationIndex1;
-        uint32_t locationIndex2;
-        long lava_level;
-
-        std::cin >> locationIndex1 >> locationIndex2 >> lava_level;
-        locationIndex1--;
-        locationIndex2--;
-
-        Tunnel t = {locations[locationIndex1], locations[locationIndex2], lava_level};
-        tunnels.push_back(t);
-        
-        locations[locationIndex1].tunnels.push_back(i);
-        locations[locationIndex2].tunnels.push_back(i);
+    int n, m; cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int u, v, w; cin >> u >> v >> w;
+        graph[u].push_back({v, i});
+        graph[v].push_back({u, i});
+        edges[i] = w;
     }
-
-    locations[0].minimum_cost = 0;
-    uint32_t minimumIndex = 0;
-    n--;
-    while (minimumIndex != n) {
-        auto& loc = locations[minimumIndex];
-
-        for (uint32_t t : loc.tunnels) {
-            Tunnel tunnel = tunnels[t];
-            
-            if (tunnel.loc_1.out == true || tunnel.loc_2.out == true)
-                continue;
-
-            if (&loc == &tunnel.loc_1) {
-                // loc_2 is the other
-                size_t minimumCost = std::abs(loc.d - tunnel.lava_level) + loc.minimum_cost;
-                if (tunnel.loc_2.minimum_cost > minimumCost) {
-                    tunnel.loc_2.minimum_cost = minimumCost;
-                    tunnel.loc_2.d = tunnel.lava_level;
-                }
-
-                if (minimumCost <= locations[minimumIndex].minimum_cost || minimumIndex == &loc - locations.data()) {
-                    minimumIndex = &tunnel.loc_2 - locations.data();
-                }
-            } else {
-                // loc_1 is the other
-                size_t minimumCost = std::abs(loc.d - tunnel.lava_level) + loc.minimum_cost;
-                if (tunnel.loc_1.minimum_cost > minimumCost) {
-                    tunnel.loc_1.minimum_cost = minimumCost;
-                    tunnel.loc_1.d = tunnel.lava_level;
-                }
-
-                if (minimumCost <= locations[minimumIndex].minimum_cost || minimumIndex == &loc - locations.data()) {
-                    minimumIndex = &tunnel.loc_1 - locations.data();
-                }
+    
+    priority_queue<State, vector<State>, greater<>> pq;
+    vector<ll> best(m + 1, LLONG_MAX);
+    
+    pq.push({0, 1, m});
+    
+    while (!pq.empty()) {
+        auto [c, a, i] = pq.top(); pq.pop();
+        
+        if (vis[i]) continue;
+        vis[i] = 1;
+        
+        if (a == n) {
+            cout << c;
+            return 0;
+        }
+        
+        for (auto [b, j] : graph[a]) {
+            if (vis[j]) continue;
+            ll new_c = c + abs(edges[i] - edges[j]);
+            if (new_c < best[j]) {
+                best[j] = new_c;
+                pq.push({new_c, b, j});
             }
         }
-
-        loc.out = true;
     }
-
-    std::cout << locations[n].minimum_cost << "\n";
-
-    return 0;
 }
