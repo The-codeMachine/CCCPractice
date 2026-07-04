@@ -45,6 +45,7 @@ int main() {
         }
     }
 
+    std::cout << '1' << "\n";
     for (int m : minutes) {
         std::cout << m << "\n";
     }
