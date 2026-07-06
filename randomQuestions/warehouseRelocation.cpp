@@ -34,7 +34,7 @@ int main() {
     k--;
     for (int i = k; i < n; ++i) {
         std::vector<int> v(warehouses.begin() + i - k, warehouses.begin() + i + 1);
-        auto cost = relocationCost(v);
+        size_t cost = relocationCost(v);
         if (cost < best)
             best = cost;
     }
