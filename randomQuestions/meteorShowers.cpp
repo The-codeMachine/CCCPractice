@@ -21,7 +21,7 @@ int main() {
         // because the row is the y and the x is the column
         std::cin >> y >> x >> yy >> xx >> v;
 
-        x--; y--; xx--; yy--;
+        x--; y--; yy--;
 
         for (int j = y; j <= yy; ++j) {
             int g = j * c;
