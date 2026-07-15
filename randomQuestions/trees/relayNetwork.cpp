@@ -1,73 +1,299 @@
 #include <iostream>
-#include <queue>
-#include <unordered_map>
-#include <unordered_set>
 #include <vector>
+#include <algorithm>
 
-struct Node {
-    int data;
-    Node* parent;
-    std::vector<Node*> children;
-};
+using namespace std;
 
-int main() {
-    int n, q;
-    std::cin >> n >> q;
-    
-    std::vector<Node> tree(n);
-    for (int i = 0; i < n; ++i) {
-        long r;
-        std::cin >> r;
-        tree[i].data = r;
+class HLD {
+private:
+    int n;
+
+    vector<vector<int>> graph;
+
+    // Tree information
+    vector<int> parent;
+    vector<int> depth;
+    vector<int> subtreeSize;
+    vector<int> heavyChild;
+
+    // HLD information
+    vector<int> head;
+    vector<int> position;
+    vector<int> nodeAtPosition;
+
+    // Node values
+    vector<int> value;
+
+    int currentPos = 0;
+
+    // Segment Tree
+    vector<int> segTree;
+
+public:
+    HLD(int N) : n(N) {
+        graph.resize(n);
+
+        parent.assign(n, -1);
+        depth.assign(n, 0);
+        subtreeSize.assign(n, 0);
+        heavyChild.assign(n, -1);
+
+        head.resize(n);
+        position.resize(n);
+        nodeAtPosition.resize(n);
+
+        value.resize(n);
+
+        segTree.assign(4 * n, 0);
     }
 
-    for (int i = 1; i < n; ++i) {
-        int a, b;
-        std::cin >> a >> b;
-        tree[a].children.push_back(&tree[b]);
-        tree[b].parent = &tree[a];
+    void setValue(int node, int v) {
+        value[node] = v;
     }
 
-    for (int i = 0; i < q; ++i) {
-        char query;
-        int u, v;
-        std::cin >> query >> u >> v;
+    void addEdge(int a, int b) {
+        graph[a].push_back(b);
+        graph[b].push_back(a);
+    }
 
-        if (query == 'U') {
-            tree[u].data = v;
-        } else {
-            // uses bfs to search the tree until we find the value
-            std::queue<Node*> q;
-            std::unordered_set<Node*> visited;
-            
-            Node* startNode = &tree[u];
+private:
 
-            q.push(startNode);
-            visited.insert(startNode);
+    //-------------------------------------
+    // DFS #1
+    //-------------------------------------
+    int dfs(int node, int par) {
 
-            while (!q.empty()) {
-                Node* current = q.front();
-                q.pop();
+        parent[node] = par;
+        subtreeSize[node] = 1;
 
-                for (Node* child : current->children) {
-                    if (child != nullptr && visited.find(child) == visited.end()) {
-                        visited.insert(child);
-                        q.push(child);
-                    }
-                }
+        int largest = 0;
 
-                if (current->parent != nullptr) {
-                    Node* parent = current->parent;
-                    if (visited.find(parent) == visited.end()) {
-                        visited.insert(parent);
-                        q.push(parent);
-                    }
-                }
+        for (int child : graph[node]) {
+
+            if (child == par)
+                continue;
+
+            depth[child] = depth[node] + 1;
+
+            int size = dfs(child, node);
+
+            subtreeSize[node] += size;
+
+            if (size > largest) {
+                largest = size;
+                heavyChild[node] = child;
             }
+        }
 
+        return subtreeSize[node];
+    }
+
+    //-------------------------------------
+    // DFS #2
+    //-------------------------------------
+    void decompose(int node, int chainHead) {
+
+        head[node] = chainHead;
+
+        position[node] = currentPos;
+        nodeAtPosition[currentPos] = node;
+
+        currentPos++;
+
+        if (heavyChild[node] != -1)
+            decompose(heavyChild[node], chainHead);
+
+        for (int child : graph[node]) {
+
+            if (child == parent[node])
+                continue;
+
+            if (child == heavyChild[node])
+                continue;
+
+            decompose(child, child);
         }
     }
 
+    //-------------------------------------
+    // Segment Tree
+    //-------------------------------------
 
-    return 0;
+    void build(int idx, int left, int right) {
+
+        if (left == right) {
+            segTree[idx] = value[nodeAtPosition[left]];
+            return;
+        }
+
+        int mid = (left + right) / 2;
+
+        build(idx * 2, left, mid);
+        build(idx * 2 + 1, mid + 1, right);
+
+        segTree[idx] = max(segTree[idx * 2], segTree[idx * 2 + 1]);
+    }
+
+    void update(int idx, int left, int right, int pos, int val) {
+
+        if (left == right) {
+            segTree[idx] = val;
+            return;
+        }
+
+        int mid = (left + right) / 2;
+
+        if (pos <= mid)
+            update(idx * 2, left, mid, pos, val);
+        else
+            update(idx * 2 + 1, mid + 1, right, pos, val);
+
+        segTree[idx] = max(segTree[idx * 2], segTree[idx * 2 + 1]);
+    }
+
+    int query(int idx, int left, int right, int ql, int qr) {
+
+        if (qr < left || right < ql)
+            return INT_MIN;
+
+        if (ql <= left && right <= qr)
+            return segTree[idx];
+
+        int mid = (left + right) / 2;
+
+        return max(
+            query(idx * 2, left, mid, ql, qr),
+            query(idx * 2 + 1, mid + 1, right, ql, qr)
+        );
+    }
+
+public:
+
+    //-------------------------------------
+    // Build everything
+    //-------------------------------------
+
+    void build() {
+
+        dfs(0, -1);
+
+        decompose(0, 0);
+
+        build(1, 0, n - 1);
+    }
+
+    //-------------------------------------
+    // Point Update
+    //-------------------------------------
+
+    void updateNode(int node, int val) {
+
+        value[node] = val;
+
+        update(
+            1,
+            0,
+            n - 1,
+            position[node],
+            val
+        );
+    }
+
+    //-------------------------------------
+    // Path Query
+    //-------------------------------------
+
+    int queryPath(int a, int b) {
+
+        int answer = INT_MIN;
+
+        while (head[a] != head[b]) {
+
+            if (depth[head[a]] < depth[head[b]])
+                swap(a, b);
+
+            answer = max(
+                answer,
+                query(
+                    1,
+                    0,
+                    n - 1,
+                    position[head[a]],
+                    position[a]
+                )
+            );
+
+            a = parent[head[a]];
+        }
+
+        if (depth[a] > depth[b])
+            swap(a, b);
+
+        answer = max(
+            answer,
+            query(
+                1,
+                0,
+                n - 1,
+                position[a],
+                position[b]
+            )
+        );
+
+        return answer;
+    }
+};
+
+int main() {
+
+    int N, Q;
+    cin >> N >> Q;
+
+    HLD tree(N);
+
+    for (int i = 0; i < N; i++) {
+        int x;
+        cin >> x;
+        tree.setValue(i, x);
+    }
+
+    for (int i = 0; i < N - 1; i++) {
+
+        int a, b;
+        cin >> a >> b;
+
+        // Remove these if input is already 0-indexed
+        --a;
+        --b;
+
+        tree.addEdge(a, b);
+    }
+
+    tree.build();
+
+    while (Q--) {
+
+        char type;
+        cin >> type;
+
+        if (type == 'U') {
+
+            int u, x;
+            cin >> u >> x;
+
+            --u;
+
+            tree.updateNode(u, x);
+
+        } else {
+
+            int u, v;
+            cin >> u >> v;
+
+            --u;
+            --v;
+
+            cout << tree.queryPath(u, v) << '\n';
+        }
+    }
 }
