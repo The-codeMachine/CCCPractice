@@ -4,12 +4,6 @@
 #include <iostream>
 #include <vector>
 
-struct Friend {
-    int position;
-    int walkSpeed;
-    int hearSpace;
-};
-
 struct Event {
     int position;
     int deltaChange;
@@ -28,9 +22,6 @@ int main() {
     int n;
     std::cin >> n;
 
-    std::vector<Friend> friends;
-    friends.reserve(n);
-
     std::vector<Event> events;
     events.reserve(2 * n);
 
@@ -44,15 +35,11 @@ int main() {
 
         p--;
 
-        friends.push_back({p, w, d});
-
         cost += calculateCost(0, p, w, d);
 
-        if (0 < p - d)
-            delta -= w;
-        else if (0 > p + d)
-            delta += w;
-        // otherwise delta += 0
+        // Initial slope from x = 0 to x = 1.
+        delta += static_cast<int64_t>(calculateCost(1, p, w, d))
+            - static_cast<int64_t>(calculateCost(0, p, w, d));
 
         if (p - d >= 0)
             events.push_back({p - d + 1, w});
@@ -73,15 +60,15 @@ int main() {
         int currentPosition = events[i].position;
 
         cost += delta * static_cast<int64_t>(currentPosition - lastPosition - 1);
-        best = std::min(best, cost);
-
+        
         while (i < events.size() && events[i].position == currentPosition) {
             delta += events[i].deltaChange;
             ++i;
         }
-
+        
         cost += delta;
-
+        
+        best = std::min(best, cost);
         lastPosition = currentPosition;
     }
 
