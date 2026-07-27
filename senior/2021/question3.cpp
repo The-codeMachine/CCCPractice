@@ -55,7 +55,7 @@ int main() {
         // otherwise delta += 0
 
         if (p - d >= 0)
-            events.push_back({p - d - 1, w});
+            events.push_back({p - d + 1, w});
 
         events.push_back({p + d + 1, w});
     }
@@ -64,13 +64,6 @@ int main() {
               [](const Event &a, const Event &b) {
                   return a.position < b.position;
               });
-
-    std::cout << "Cost: " << cost << "\n";
-    std::cout << "Delta: " << delta << "\n";
-
-    for (Event e : events) {
-        std::cout << "Event Position: " << e.position << "\nEvent Change: " << e.deltaChange << "\n\n";
-    }
 
     int64_t best = cost;
     int lastPosition = 0;
@@ -82,14 +75,12 @@ int main() {
         cost += delta * static_cast<int64_t>(currentPosition - lastPosition - 1);
         best = std::min(best, cost);
 
-        std::cout << "Cost: " << cost << "\n";
-
         while (i < events.size() && events[i].position == currentPosition) {
             delta += events[i].deltaChange;
             ++i;
         }
 
-        std::cout << "Delta: " << delta << "\n";
+        cost += delta;
 
         lastPosition = currentPosition;
     }
