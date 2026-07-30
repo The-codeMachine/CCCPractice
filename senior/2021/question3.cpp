@@ -28,29 +28,29 @@ int main() {
     int64_t cost = 0;
     int64_t delta = 0;
 
-    // Compute initial cost and initial slope at x = 0.
     for (int i = 0; i < n; ++i) {
         int p, w, d;
         std::cin >> p >> w >> d;
 
-        p--;
-
         cost += calculateCost(0, p, w, d);
 
-        // Initial slope from x = 0 to x = 1.
-        delta += static_cast<int64_t>(calculateCost(1, p, w, d))
-            - static_cast<int64_t>(calculateCost(0, p, w, d));
+        if (p - d >= 0) {
+            events.push_back({p - d, w});
+        }
 
-        if (p - d >= 0)
-            events.push_back({p - d + 1, w});
+        events.push_back({p + d, w});
 
-        events.push_back({p + d + 1, w});
+        if (cost > 0) 
+            delta -= w;
     }
 
     std::sort(events.begin(), events.end(),
               [](const Event &a, const Event &b) {
                   return a.position < b.position;
               });
+
+    std::cout << "Cost: " << cost << "\n";
+    std::cout << "Delta: " << delta << "\n";
 
     int64_t best = cost;
     int lastPosition = 0;
@@ -59,15 +59,16 @@ int main() {
     while (i < events.size()) {
         int currentPosition = events[i].position;
 
-        cost += delta * static_cast<int64_t>(currentPosition - lastPosition - 1);
+        cost += delta * static_cast<int64_t>(currentPosition - lastPosition);
         
         while (i < events.size() && events[i].position == currentPosition) {
             delta += events[i].deltaChange;
             ++i;
         }
         
-        cost += delta;
-        
+        std::cout << "Cost: " << cost << "\n";
+        std::cout << "Delta: " << delta << "\n";
+
         best = std::min(best, cost);
         lastPosition = currentPosition;
     }
