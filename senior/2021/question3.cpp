@@ -34,7 +34,7 @@ int main() {
 
         cost += calculateCost(0, p, w, d);
 
-        if (p - d >= 0) {
+        if (p - d > 0) {
             events.push_back({p - d, w});
         }
 
@@ -48,9 +48,6 @@ int main() {
               [](const Event &a, const Event &b) {
                   return a.position < b.position;
               });
-
-    std::cout << "Cost: " << cost << "\n";
-    std::cout << "Delta: " << delta << "\n";
 
     int64_t best = cost;
     int lastPosition = 0;
@@ -66,9 +63,6 @@ int main() {
             ++i;
         }
         
-        std::cout << "Cost: " << cost << "\n";
-        std::cout << "Delta: " << delta << "\n";
-
         best = std::min(best, cost);
         lastPosition = currentPosition;
     }
