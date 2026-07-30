@@ -32,7 +32,8 @@ int main() {
         int p, w, d;
         std::cin >> p >> w >> d;
 
-        cost += calculateCost(0, p, w, d);
+        uint64_t cc = calculateCost(0, p, w, d);
+        cost += cc;
 
         if (p - d > 0) {
             events.push_back({p - d, w});
@@ -40,7 +41,7 @@ int main() {
 
         events.push_back({p + d, w});
 
-        if (cost > 0) 
+        if (cc > 0) 
             delta -= w;
     }
 
@@ -62,7 +63,7 @@ int main() {
             delta += events[i].deltaChange;
             ++i;
         }
-        
+
         best = std::min(best, cost);
         lastPosition = currentPosition;
     }
